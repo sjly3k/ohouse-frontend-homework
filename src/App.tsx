@@ -1,25 +1,10 @@
-import React, { useState, useEffect } from "react";
-import CardList from "./components/CardList";
-import { getCards } from "./lib/api";
+import React from "react";
+import CardListPage from "./pages/CardListPage";
 
 function App() {
-  const [cards, setCards] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getCards();
-        setCards(response.data);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    fetchData();
-  }, []);
-
   return (
     <div>
-      <CardList cards={cards} />
+      <CardListPage />
     </div>
   );
 }
