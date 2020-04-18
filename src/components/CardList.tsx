@@ -6,7 +6,8 @@ import CardItem from "./CardItem";
 const CardListBlock = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: flex-start;
   margin: 0 -10px;
 `;
 

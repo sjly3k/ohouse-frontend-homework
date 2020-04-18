@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import BookmarkSvg from "./icon_bookmark.svg";
-import MarkedBookmarkSvg from "./icon_bookmark.svg";
+import MarkedBookmarkSvg from "./icon_bookmark_marked.svg";
 
 const BookmarkIconBlock = styled.div`
   &:hover {

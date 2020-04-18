@@ -5,7 +5,7 @@ import BookmarkIcon from "./common/BookmarkIcon";
 import colors from "../lib/colors";
 
 const CardItemBlock = styled.div`
-  flex: 25%;
+  flex: 0 0 25%;
   padding: 0 10px 30px 10px;
   cursor: pointer;
 
