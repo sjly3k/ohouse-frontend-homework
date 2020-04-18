@@ -3,8 +3,15 @@ import styled from "styled-components";
 import CheckboxIcon from "../components/common/CheckboxIcon";
 import CardList from "../components/CardList";
 import { getCards } from "../lib/api";
+import Responsive from "../components/common/Responsive";
 
-const CardListPageBlock = styled.div``;
+const CardListPageBlock = styled.div`
+  .filter-wrapper {
+    padding: 30px 0;
+  }
+`;
+
+const Wrapper = styled(Responsive)``;
 
 type CardListPageProps = {};
 
@@ -22,10 +29,15 @@ function CardListPage(props: CardListPageProps) {
     };
     fetchData();
   }, []);
+
   return (
     <CardListPageBlock>
-      <CheckboxIcon isChecked={true} />
-      <CardList cards={cards} />
+      <Wrapper>
+        <div className="filter-wrapper">
+          <CheckboxIcon isChecked={true} /> 스크랩한 것만 보기
+        </div>
+        <CardList cards={cards} />
+      </Wrapper>
     </CardListPageBlock>
   );
 }
