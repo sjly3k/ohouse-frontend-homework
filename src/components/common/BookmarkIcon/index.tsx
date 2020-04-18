@@ -24,6 +24,7 @@ function BookmarkIcon({ isBookmarked }: BookmarkIconProps) {
       <img
         className="bookmark-icon"
         src={isBookmarked ? MarkedBookmarkSvg : BookmarkSvg}
+        alt="bookmark-icon"
       />
     </BookmarkIconBlock>
   );

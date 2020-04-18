@@ -54,11 +54,19 @@ function CardItem({ card }: CardItemProps) {
   return (
     <CardItemBlock>
       <div className="profile">
-        <img className="profile-image" src={profile_image_url} />
+        <img
+          className="profile-image"
+          src={profile_image_url}
+          alt="profile thumbnail"
+        />
         <div className="nickname">{nickname}</div>
       </div>
       <div className="content">
-        <img className="content-image" src={image_url} />
+        <img
+          className="content-image"
+          src={image_url}
+          alt="content thumbnail"
+        />
         <div className="bookmark-wrapper">
           <BookmarkIcon isBookmarked={isBookmarked} />
         </div>

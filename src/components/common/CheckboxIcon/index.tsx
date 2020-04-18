@@ -24,6 +24,7 @@ function CheckboxIcon({ isChecked }: CheckboxIconProps) {
       <img
         className="checkbox-icon"
         src={isChecked ? CheckedCheckboxSvg : CheckboxSvg}
+        alt="checkbox-icon"
       />
     </CheckboxIconBlock>
   );
