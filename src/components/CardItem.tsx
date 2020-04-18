@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Card } from "../modules/Cards";
-import BookmarkIcon from "./bookmark/BookmarkIcon";
+import BookmarkIcon from "./common/BookmarkIcon";
 
 const CardItemBlock = styled.div`
   flex: 25%;
