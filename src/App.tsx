@@ -1,8 +1,23 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { getCards } from "./lib/api";
 
 function App() {
+  const [cards, setCards] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getCards();
+        setCards(response.data);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
