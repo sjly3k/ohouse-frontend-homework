@@ -4,10 +4,19 @@ import CheckboxIcon from "../components/common/CheckboxIcon";
 import CardList from "../components/CardList";
 import { getCards } from "../lib/api";
 import Responsive from "../components/common/Responsive";
+import colors from "../lib/colors";
 
 const CardListPageBlock = styled.div`
+  color: ${colors.font.primary};
+
   .filter-wrapper {
+    display: flex;
     padding: 30px 0;
+    align-items: center;
+
+    .scrap-text {
+      margin-left: 6px;
+    }
   }
 `;
 
@@ -34,7 +43,8 @@ function CardListPage(props: CardListPageProps) {
     <CardListPageBlock>
       <Wrapper>
         <div className="filter-wrapper">
-          <CheckboxIcon isChecked={true} /> 스크랩한 것만 보기
+          <CheckboxIcon isChecked={true} />{" "}
+          <div className="scrap-text">스크랩한 것만 보기</div>
         </div>
         <CardList cards={cards} />
       </Wrapper>

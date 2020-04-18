@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Card } from "../modules/Cards";
 import BookmarkIcon from "./common/BookmarkIcon";
+import colors from "../lib/colors";
 
 const CardItemBlock = styled.div`
   flex: 25%;
@@ -24,6 +25,7 @@ const CardItemBlock = styled.div`
     .nickname {
       font-weight: bold;
       margin-left: 10px;
+      color: ${colors.font.nickname};
     }
   }
 

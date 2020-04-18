@@ -7,6 +7,7 @@ const CardListBlock = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  margin: 0 -10px;
 `;
 
 type CardListProps = {

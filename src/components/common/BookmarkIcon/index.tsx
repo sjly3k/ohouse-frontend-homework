@@ -4,13 +4,13 @@ import BookmarkSvg from "./icon_bookmark.svg";
 import MarkedBookmarkSvg from "./icon_bookmark.svg";
 
 const BookmarkIconBlock = styled.div`
+  &:hover {
+    opacity: 0.5;
+  }
+
   .bookmark-icon {
     width: 32px;
     height: 32px;
-
-    &:hover {
-      opacity: 0.5;
-    }
   }
 `;
 
