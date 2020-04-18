@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Card } from "../modules/Cards";
+import { Card } from "../modules/cards";
 import CardItem from "./CardItem";
 
 const CardListBlock = styled.div`
