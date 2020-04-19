@@ -28,7 +28,7 @@ export const getCardsAsync = createAsyncAction(
   GET_CARDS_FAILURE
 )<number, Card[], AxiosError>();
 
-export const toggleScrap = createAction(TOGGLE_SCRAP)<number>();
+export const toggleScrap = createAction(TOGGLE_SCRAP)<Card>();
 
 const actions = { getCardsAsync, toggleScrap };
 type CardsAction = ActionType<typeof actions>;
@@ -53,11 +53,14 @@ export function* cardsSaga() {
 
 type CardsState = {
   cards: Card[];
+  scrapCards: Card[];
   error: Error | null;
 };
 
+const localScrapCards = localStorage.getItem("scrapCards");
 const initialState: CardsState = {
   cards: [],
+  scrapCards: localScrapCards ? JSON.parse(localScrapCards) : [],
   error: null,
 };
 
@@ -69,18 +72,48 @@ const cards = createReducer<CardsState, CardsAction>(initialState, {
   [GET_CARDS_SUCCESS]: (state, { payload: cards }) => ({
     ...state,
     error: null,
-    cards: state.cards.concat(cards),
+    cards: state.cards.concat(
+      cards.map((card) =>
+        state.scrapCards.find((scrapCard) => scrapCard.id === card.id)
+          ? { ...card, isBookmarked: true }
+          : card
+      )
+    ),
   }),
   [GET_CARDS_FAILURE]: (state, { payload: error }) => ({
     ...state,
     error: error,
   }),
-  [TOGGLE_SCRAP]: (state, { payload: id }) => ({
-    ...state,
-    cards: state.cards.map((card) =>
-      card.id === id ? { ...card, isBookmarked: !card.isBookmarked } : card
-    ),
-  }),
+  [TOGGLE_SCRAP]: (state, { payload: toggleCard }) => {
+    let newState = {
+      ...state,
+      cards: state.cards.map((card) =>
+        card.id === toggleCard.id
+          ? { ...card, isBookmarked: !card.isBookmarked }
+          : card
+      ),
+    };
+
+    if (toggleCard.isBookmarked) {
+      newState = {
+        ...newState,
+        scrapCards: state.scrapCards.filter(
+          (card) => card.id !== toggleCard.id
+        ),
+      };
+    } else {
+      newState = {
+        ...newState,
+        scrapCards: state.scrapCards.concat({
+          ...toggleCard,
+          isBookmarked: true,
+        }),
+      };
+    }
+
+    localStorage.setItem("scrapCards", JSON.stringify(newState.scrapCards));
+    return newState;
+  },
 });
 
 export default cards;

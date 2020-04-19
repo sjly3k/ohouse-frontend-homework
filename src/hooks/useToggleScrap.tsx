@@ -1,8 +1,8 @@
 import { useDispatch } from "react-redux";
 import { useCallback } from "react";
-import { toggleScrap } from "../modules/cards";
+import { toggleScrap, Card } from "../modules/cards";
 
-export default function useToggleScrap(id: number) {
+export default function useToggleScrap(card: Card) {
   const dispatch = useDispatch();
-  return useCallback(() => dispatch(toggleScrap(id)), [dispatch, id]);
+  return useCallback(() => dispatch(toggleScrap(card)), [dispatch, card]);
 }
