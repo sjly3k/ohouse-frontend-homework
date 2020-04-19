@@ -8,14 +8,7 @@ import { AxiosError } from "axios";
 import { getCards } from "../lib/api";
 import { takeEvery, call, put, delay } from "redux-saga/effects";
 import { startLoading, finishLoading } from "./loading";
-
-export type Card = {
-  id: number;
-  image_url: string;
-  nickname: string;
-  profile_image_url: string;
-  isBookmarked: boolean;
-};
+import * as localStorageUtil from "../lib/localStorageUtil";
 
 const GET_CARDS = "cards/GET_CARDS";
 const GET_CARDS_SUCCESS = "cards/GET_CARDS_SUCCESS";
@@ -55,16 +48,23 @@ export function* cardsSaga() {
   yield takeEvery(GET_CARDS, getCardsSaga);
 }
 
+export type Card = {
+  id: number;
+  image_url: string;
+  nickname: string;
+  profile_image_url: string;
+  isBookmarked: boolean;
+};
+
 type CardsState = {
   cards: Card[];
   scrapCards: Card[];
   error: Error | null;
 };
 
-const localScrapCards = localStorage.getItem("scrapCards");
 const initialState: CardsState = {
   cards: [],
-  scrapCards: localScrapCards ? JSON.parse(localScrapCards) : [],
+  scrapCards: [...localStorageUtil.getScrapCards()],
   error: null,
 };
 
@@ -105,6 +105,7 @@ const cards = createReducer<CardsState, CardsAction>(initialState, {
           (card) => card.id !== toggleCard.id
         ),
       };
+      localStorageUtil.removeScrapCard(toggleCard.id);
     } else {
       newState = {
         ...newState,
@@ -113,9 +114,9 @@ const cards = createReducer<CardsState, CardsAction>(initialState, {
           isBookmarked: true,
         }),
       };
+      localStorageUtil.addScrapCard({ ...toggleCard, isBookmarked: true });
     }
 
-    localStorage.setItem("scrapCards", JSON.stringify(newState.scrapCards));
     return newState;
   },
 });
