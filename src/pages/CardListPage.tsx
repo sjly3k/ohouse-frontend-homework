@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { getCardsAsync } from "../modules/cards";
 import CardListFilter from "../components/CardListFilter";
 
-const CardListPageBlock = styled.div`
+const CardListPageBlock = styled(Responsive)`
   color: ${colors.font.primary};
 `;
 
@@ -20,10 +20,8 @@ function CardListPage() {
 
   return (
     <CardListPageBlock>
-      <Responsive>
-        <CardListFilter />
-        <CardList />
-      </Responsive>
+      <CardListFilter />
+      <CardList />
     </CardListPageBlock>
   );
 }

@@ -10,6 +10,10 @@ const CardItemBlock = styled.div`
   padding: 0 10px 30px 10px;
   cursor: pointer;
 
+  @media (max-width: 768px) {
+    flex: 0 0 50%;
+  }
+
   .profile {
     display: flex;
     flex-wrap: wrap;
