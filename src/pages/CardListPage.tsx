@@ -6,7 +6,7 @@ import Responsive from "../components/common/Responsive";
 import colors from "../lib/colors";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../modules";
-import { getCardsAsync } from "../modules/cards";
+import { getCardsAsync, toggleFilterOnlyScrap } from "../modules/cards";
 
 const CardListPageBlock = styled.div`
   color: ${colors.font.primary};
@@ -28,10 +28,12 @@ const ErrorBlock = styled.div`
 `;
 
 function CardListPage() {
-  const [isShownOnlyScrapCards, setIsShownOnlyScrapCards] = useState(false);
-  const { cards, scrapCards, error } = useSelector(
-    (state: RootState) => state.cards
-  );
+  const {
+    cards,
+    scrapCards,
+    error,
+    filter: { onlyScrap },
+  } = useSelector((state: RootState) => state.cards);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -39,17 +41,17 @@ function CardListPage() {
   }, [dispatch]);
 
   const onToggle = () => {
-    setIsShownOnlyScrapCards((isShownOnlyScrapCards) => !isShownOnlyScrapCards);
+    dispatch(toggleFilterOnlyScrap());
   };
 
   return (
     <CardListPageBlock>
       <Responsive>
         <div className="filter-wrapper" onClick={onToggle}>
-          <CheckboxIcon isChecked={isShownOnlyScrapCards} />{" "}
+          <CheckboxIcon isChecked={onlyScrap} />{" "}
           <div className="scrap-text">스크랩한 것만 보기</div>
         </div>
-        <CardList cards={isShownOnlyScrapCards ? scrapCards : cards} />
+        <CardList cards={onlyScrap ? scrapCards : cards} />
         {error && (
           <ErrorBlock>요청을 처리하는 도중에 오류가 발생했어요!</ErrorBlock>
         )}

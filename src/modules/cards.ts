@@ -18,6 +18,8 @@ const TOGGLE_SCRAP_CARD = "cards/TOGGLE_SCRAP_CARD";
 const ADD_SCRAP_CARD = "cards/ADD_SCRAP_CARD";
 const REMOVE_SCRAP_CARD = "cards/REMOVE_SCRAP_CARD";
 
+const TOGGLE_FILTER_ONLY_SCRAP = "cards/TOGGLE_FILTER_ONLY_SCRAP";
+
 export const getCardsAsync = createAsyncAction(
   GET_CARDS,
   GET_CARDS_SUCCESS,
@@ -28,11 +30,14 @@ export const toggleScrapCard = createAction(TOGGLE_SCRAP_CARD)<Card>();
 export const addScrapCard = createAction(ADD_SCRAP_CARD)<Card>();
 export const removeScrapCard = createAction(REMOVE_SCRAP_CARD)<number>();
 
+export const toggleFilterOnlyScrap = createAction(TOGGLE_FILTER_ONLY_SCRAP)();
+
 const actions = {
   getCardsAsync,
   toggleScrapCard,
   addScrapCard,
   removeScrapCard,
+  toggleFilterOnlyScrap,
 };
 type CardsAction = ActionType<typeof actions>;
 
@@ -108,12 +113,18 @@ type CardsState = {
   cards: Card[];
   scrapCards: Card[];
   error: Error | null;
+  filter: {
+    onlyScrap: boolean;
+  };
 };
 
 const initialState: CardsState = {
   cards: [],
   scrapCards: localStorageUtil.getScrapCards(),
   error: null,
+  filter: {
+    onlyScrap: false,
+  },
 };
 
 const cards = createReducer<CardsState, CardsAction>(initialState, {
@@ -145,6 +156,13 @@ const cards = createReducer<CardsState, CardsAction>(initialState, {
   [REMOVE_SCRAP_CARD]: (state, { payload: id }) => ({
     ...state,
     scrapCards: state.scrapCards.filter((card) => card.id !== id),
+  }),
+  [TOGGLE_FILTER_ONLY_SCRAP]: (state) => ({
+    ...state,
+    filter: {
+      ...state.filter,
+      onlyScrap: !state.filter.onlyScrap,
+    },
   }),
 });
 
