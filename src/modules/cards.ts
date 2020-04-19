@@ -116,6 +116,7 @@ type CardsState = {
   filter: {
     onlyScrap: boolean;
   };
+  page: number;
 };
 
 const initialState: CardsState = {
@@ -125,12 +126,14 @@ const initialState: CardsState = {
   filter: {
     onlyScrap: false,
   },
+  page: 0,
 };
 
 const cards = createReducer<CardsState, CardsAction>(initialState, {
-  [GET_CARDS]: (state) => ({
+  [GET_CARDS]: (state, { payload: page }) => ({
     ...state,
     error: null,
+    page,
   }),
   [GET_CARDS_SUCCESS]: (state, { payload: cards }) => ({
     ...state,

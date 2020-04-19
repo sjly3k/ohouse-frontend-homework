@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import CardItem from "./CardItem";
 import useCardList from "../hooks/useCardList";
@@ -36,9 +36,14 @@ function CardList() {
     cards,
     scrapCards,
     filter: { onlyScrap },
+    getGetCards,
   } = useCardList();
 
   const showingCards = onlyScrap ? scrapCards : cards;
+
+  useEffect(() => {
+    getGetCards();
+  }, []);
 
   return (
     <CardListBlock>
