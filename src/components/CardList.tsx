@@ -10,10 +10,23 @@ const CardListBlock = styled.div`
   margin: 0 -10px;
 `;
 
+const LoadingBlock = styled.div`
+  width: 100%;
+  text-align: center;
+  padding: 80px 0;
+`;
+
 const ErrorBlock = styled.div`
   width: 100%;
   text-align: center;
   padding: 80px 0;
+`;
+
+const EmptyBlock = styled.div`
+  width: 100%;
+  text-align: center;
+  padding: 80px 0;
+  line-height: 2;
 `;
 
 function CardList() {
@@ -29,9 +42,16 @@ function CardList() {
 
   return (
     <CardListBlock>
-      {showingCards &&
-        showingCards.map((card) => <CardItem key={card.id} card={card} />)}
-      {loading && "loading"}
+      {!loading && showingCards.length === 0 ? (
+        <EmptyBlock>
+          조건에 맞는 사진이 없어요 ㅠㅠ
+          <br />
+          필터를 다시 설정해주세요.
+        </EmptyBlock>
+      ) : (
+        showingCards.map((card) => <CardItem key={card.id} card={card} />)
+      )}
+      {loading && <LoadingBlock>로딩중...</LoadingBlock>}
       {error && (
         <ErrorBlock>요청을 처리하는 도중에 오류가 발생했어요!</ErrorBlock>
       )}
