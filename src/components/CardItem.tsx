@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Card } from "../modules/cards";
 import BookmarkIcon from "./common/BookmarkIcon";
 import colors from "../lib/colors";
-import useToggleScrap from "../hooks/useToggleScrap";
+import useCardItem from "../hooks/useCardItem";
 
 const CardItemBlock = styled.div`
   flex: 0 0 25%;
@@ -56,7 +56,7 @@ type CardItemProps = {
 
 function CardItem({ card }: CardItemProps) {
   const { image_url, nickname, profile_image_url, isBookmarked } = card;
-  const toggleScrap = useToggleScrap(card);
+  const toggleScrap = useCardItem(card);
 
   return (
     <CardItemBlock>
