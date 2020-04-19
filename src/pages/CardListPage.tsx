@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import CheckboxIcon from "../components/common/CheckboxIcon";
 import CardList from "../components/CardList";
-import { getCards } from "../lib/api";
 import Responsive from "../components/common/Responsive";
 import colors from "../lib/colors";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../modules";
+import { getCardsAsync } from "../modules/cards";
 
 const CardListPageBlock = styled.div`
   color: ${colors.font.primary};
@@ -20,34 +22,31 @@ const CardListPageBlock = styled.div`
   }
 `;
 
-const Wrapper = styled(Responsive)``;
+const ErrorBlock = styled.div`
+  text-align: center;
+  padding: 80px 0;
+`;
 
-type CardListPageProps = {};
-
-function CardListPage(props: CardListPageProps) {
-  const [cards, setCards] = useState([]);
+function CardListPage() {
+  const { cards, error } = useSelector((state: RootState) => state.cards);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getCards();
-        setCards(response.data);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    fetchData();
-  }, []);
+    dispatch(getCardsAsync.request(1));
+  }, [dispatch]);
 
   return (
     <CardListPageBlock>
-      <Wrapper>
+      <Responsive>
         <div className="filter-wrapper">
           <CheckboxIcon isChecked={true} />{" "}
           <div className="scrap-text">스크랩한 것만 보기</div>
         </div>
         <CardList cards={cards} />
-      </Wrapper>
+        {error && (
+          <ErrorBlock>요청을 처리하는 도중에 오류가 발생했어요!</ErrorBlock>
+        )}
+      </Responsive>
     </CardListPageBlock>
   );
 }
