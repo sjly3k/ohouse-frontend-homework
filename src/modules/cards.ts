@@ -6,7 +6,8 @@ import {
 } from "typesafe-actions";
 import { AxiosError } from "axios";
 import { getCards } from "../lib/api";
-import { takeEvery, call, put } from "redux-saga/effects";
+import { takeEvery, call, put, delay } from "redux-saga/effects";
+import { startLoading, finishLoading } from "./loading";
 
 export type Card = {
   id: number;
@@ -34,7 +35,9 @@ const actions = { getCardsAsync, toggleScrap };
 type CardsAction = ActionType<typeof actions>;
 
 function* getCardsSaga(action: ReturnType<typeof getCardsAsync.request>) {
+  yield put(startLoading(GET_CARDS));
   try {
+    yield delay(1500);
     const { data } = yield call(getCards, action.payload);
     const mappedCard = data.map((card: Card) => ({
       ...card,
@@ -45,6 +48,7 @@ function* getCardsSaga(action: ReturnType<typeof getCardsAsync.request>) {
     console.log(e);
     yield put(getCardsAsync.failure(e));
   }
+  yield put(finishLoading(GET_CARDS));
 }
 
 export function* cardsSaga() {

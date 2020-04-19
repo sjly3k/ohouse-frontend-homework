@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { Card } from "../modules/cards";
 import CardItem from "./CardItem";
+import { RootState } from "../modules";
+import { useSelector } from "react-redux";
 
 const CardListBlock = styled.div`
   display: flex;
@@ -16,9 +18,14 @@ type CardListProps = {
 };
 
 function CardList({ cards }: CardListProps) {
+  const { loading } = useSelector((state: RootState) => ({
+    ...state,
+    loading: state.loading["cards/GET_CARDS"],
+  }));
   return (
     <CardListBlock>
       {cards && cards.map((card) => <CardItem key={card.id} card={card} />)}
+      {loading && "loading"}
     </CardListBlock>
   );
 }
