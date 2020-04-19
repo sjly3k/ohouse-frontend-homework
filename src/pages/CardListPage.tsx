@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import CheckboxIcon from "../components/common/CheckboxIcon";
 import CardList from "../components/CardList";
@@ -28,21 +28,28 @@ const ErrorBlock = styled.div`
 `;
 
 function CardListPage() {
-  const { cards, error } = useSelector((state: RootState) => state.cards);
+  const [isShownOnlyScrapCards, setIsShownOnlyScrapCards] = useState(false);
+  const { cards, scrapCards, error } = useSelector(
+    (state: RootState) => state.cards
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getCardsAsync.request(1));
   }, [dispatch]);
 
+  const onToggle = () => {
+    setIsShownOnlyScrapCards((isShownOnlyScrapCards) => !isShownOnlyScrapCards);
+  };
+
   return (
     <CardListPageBlock>
       <Responsive>
-        <div className="filter-wrapper">
-          <CheckboxIcon isChecked={true} />{" "}
+        <div className="filter-wrapper" onClick={onToggle}>
+          <CheckboxIcon isChecked={isShownOnlyScrapCards} />{" "}
           <div className="scrap-text">스크랩한 것만 보기</div>
         </div>
-        <CardList cards={cards} />
+        <CardList cards={isShownOnlyScrapCards ? scrapCards : cards} />
         {error && (
           <ErrorBlock>요청을 처리하는 도중에 오류가 발생했어요!</ErrorBlock>
         )}
