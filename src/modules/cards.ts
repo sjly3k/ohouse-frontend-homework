@@ -6,7 +6,7 @@ import {
 } from "typesafe-actions";
 import { AxiosError } from "axios";
 import { getCards } from "../lib/api";
-import { takeEvery, call, put, delay } from "redux-saga/effects";
+import { takeEvery, call, put, select } from "redux-saga/effects";
 import { startLoading, finishLoading } from "./loading";
 import * as localStorageUtil from "../lib/localStorageUtil";
 
@@ -14,7 +14,9 @@ const GET_CARDS = "cards/GET_CARDS";
 const GET_CARDS_SUCCESS = "cards/GET_CARDS_SUCCESS";
 const GET_CARDS_FAILURE = "cards/GET_CARDS_FAILURE";
 
-const TOGGLE_SCRAP = "scrap/TOGGLE_SCRAP";
+const TOGGLE_SCRAP_CARD = "cards/TOGGLE_SCRAP_CARD";
+const ADD_SCRAP_CARD = "cards/ADD_SCRAP_CARD";
+const REMOVE_SCRAP_CARD = "cards/REMOVE_SCRAP_CARD";
 
 export const getCardsAsync = createAsyncAction(
   GET_CARDS,
@@ -22,21 +24,36 @@ export const getCardsAsync = createAsyncAction(
   GET_CARDS_FAILURE
 )<number, Card[], AxiosError>();
 
-export const toggleScrap = createAction(TOGGLE_SCRAP)<Card>();
+export const toggleScrapCard = createAction(TOGGLE_SCRAP_CARD)<Card>();
+export const addScrapCard = createAction(ADD_SCRAP_CARD)<Card>();
+export const removeScrapCard = createAction(REMOVE_SCRAP_CARD)<number>();
 
-const actions = { getCardsAsync, toggleScrap };
+const actions = {
+  getCardsAsync,
+  toggleScrapCard,
+  addScrapCard,
+  removeScrapCard,
+};
 type CardsAction = ActionType<typeof actions>;
 
 function* getCardsSaga(action: ReturnType<typeof getCardsAsync.request>) {
   yield put(startLoading(GET_CARDS));
   try {
-    yield delay(1500);
     const { data } = yield call(getCards, action.payload);
-    const mappedCard = data.map((card: Card) => ({
-      ...card,
-      isBookmarked: false,
-    }));
-    yield put(getCardsAsync.success(mappedCard));
+
+    const scrapCards: Card[] = yield select((state) => state.cards.scrapCards);
+
+    const nextCards = data.map((card: Card) => {
+      const isBookmarked = scrapCards.find(
+        (scrapCard) => scrapCard.id === card.id
+      );
+      return {
+        ...card,
+        isBookmarked,
+      };
+    });
+
+    yield put(getCardsAsync.success(nextCards));
   } catch (e) {
     console.log(e);
     yield put(getCardsAsync.failure(e));
@@ -44,8 +61,39 @@ function* getCardsSaga(action: ReturnType<typeof getCardsAsync.request>) {
   yield put(finishLoading(GET_CARDS));
 }
 
+function* toggleScrapCardSaga({
+  payload: card,
+}: ReturnType<typeof toggleScrapCard>) {
+  const nextCard = { ...card, isBookmarked: !card.isBookmarked };
+
+  if (nextCard.isBookmarked) {
+    yield put({
+      type: ADD_SCRAP_CARD,
+      payload: nextCard,
+    });
+  } else {
+    yield put({
+      type: REMOVE_SCRAP_CARD,
+      payload: nextCard.id,
+    });
+  }
+}
+
+function* addScrapCardSaga({ payload: card }: ReturnType<typeof addScrapCard>) {
+  yield call(localStorageUtil.addScrapCard, card);
+}
+
+function* removeScrapCardSaga({
+  payload: id,
+}: ReturnType<typeof removeScrapCard>) {
+  yield call(localStorageUtil.removeScrapCard, id);
+}
+
 export function* cardsSaga() {
   yield takeEvery(GET_CARDS, getCardsSaga);
+  yield takeEvery(TOGGLE_SCRAP_CARD, toggleScrapCardSaga);
+  yield takeEvery(ADD_SCRAP_CARD, addScrapCardSaga);
+  yield takeEvery(REMOVE_SCRAP_CARD, removeScrapCardSaga);
 }
 
 export type Card = {
@@ -64,7 +112,7 @@ type CardsState = {
 
 const initialState: CardsState = {
   cards: [],
-  scrapCards: [...localStorageUtil.getScrapCards()],
+  scrapCards: localStorageUtil.getScrapCards(),
   error: null,
 };
 
@@ -76,49 +124,28 @@ const cards = createReducer<CardsState, CardsAction>(initialState, {
   [GET_CARDS_SUCCESS]: (state, { payload: cards }) => ({
     ...state,
     error: null,
-    cards: state.cards.concat(
-      cards.map((card) =>
-        state.scrapCards.find((scrapCard) => scrapCard.id === card.id)
-          ? { ...card, isBookmarked: true }
-          : card
-      )
-    ),
+    cards: state.cards.concat(cards),
   }),
   [GET_CARDS_FAILURE]: (state, { payload: error }) => ({
     ...state,
     error: error,
   }),
-  [TOGGLE_SCRAP]: (state, { payload: toggleCard }) => {
-    let newState = {
-      ...state,
-      cards: state.cards.map((card) =>
-        card.id === toggleCard.id
-          ? { ...card, isBookmarked: !card.isBookmarked }
-          : card
-      ),
-    };
-
-    if (toggleCard.isBookmarked) {
-      newState = {
-        ...newState,
-        scrapCards: state.scrapCards.filter(
-          (card) => card.id !== toggleCard.id
-        ),
-      };
-      localStorageUtil.removeScrapCard(toggleCard.id);
-    } else {
-      newState = {
-        ...newState,
-        scrapCards: state.scrapCards.concat({
-          ...toggleCard,
-          isBookmarked: true,
-        }),
-      };
-      localStorageUtil.addScrapCard({ ...toggleCard, isBookmarked: true });
-    }
-
-    return newState;
-  },
+  [TOGGLE_SCRAP_CARD]: (state, { payload: card }) => ({
+    ...state,
+    cards: state.cards.map((prevCard) =>
+      prevCard.id === card.id
+        ? { ...prevCard, isBookmarked: !prevCard.isBookmarked }
+        : prevCard
+    ),
+  }),
+  [ADD_SCRAP_CARD]: (state, { payload: card }) => ({
+    ...state,
+    scrapCards: state.scrapCards.concat(card),
+  }),
+  [REMOVE_SCRAP_CARD]: (state, { payload: id }) => ({
+    ...state,
+    scrapCards: state.scrapCards.filter((card) => card.id !== id),
+  }),
 });
 
 export default cards;

@@ -51,7 +51,7 @@ type CardItemProps = {
 };
 
 function CardItem({ card }: CardItemProps) {
-  const { id, image_url, nickname, profile_image_url, isBookmarked } = card;
+  const { image_url, nickname, profile_image_url, isBookmarked } = card;
   const toggleScrap = useToggleScrap(card);
 
   return (
