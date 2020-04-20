@@ -20,6 +20,9 @@ export const REMOVE_SCRAP_CARD = "cards/REMOVE_SCRAP_CARD";
 
 export const TOGGLE_FILTER_ONLY_SCRAP = "cards/TOGGLE_FILTER_ONLY_SCRAP";
 
+export const ADD_PAGE = "cards/ADD_PAGE";
+export const SET_IS_LAST_PAGE = "cards/SET_IS_LAST_PAGE";
+
 export const getCardsAsync = createAsyncAction(
   GET_CARDS,
   GET_CARDS_SUCCESS,
@@ -32,12 +35,17 @@ export const removeScrapCard = createAction(REMOVE_SCRAP_CARD)<number>();
 
 export const toggleFilterOnlyScrap = createAction(TOGGLE_FILTER_ONLY_SCRAP)();
 
+export const addPage = createAction(ADD_PAGE)();
+export const setIsLasPage = createAction(SET_IS_LAST_PAGE)<boolean>();
+
 const actions = {
   getCardsAsync,
   toggleScrapCard,
   addScrapCard,
   removeScrapCard,
   toggleFilterOnlyScrap,
+  addPage,
+  setIsLasPage,
 };
 type CardsAction = ActionType<typeof actions>;
 
@@ -117,6 +125,7 @@ type CardsState = {
     onlyScrap: boolean;
   };
   page: number;
+  isLastPage: boolean;
 };
 
 const initialState: CardsState = {
@@ -126,19 +135,20 @@ const initialState: CardsState = {
   filter: {
     onlyScrap: false,
   },
-  page: 0,
+  page: 1,
+  isLastPage: false,
 };
 
 const cards = createReducer<CardsState, CardsAction>(initialState, {
-  [GET_CARDS]: (state, { payload: page }) => ({
+  [GET_CARDS]: (state) => ({
     ...state,
     error: null,
-    page,
   }),
   [GET_CARDS_SUCCESS]: (state, { payload: cards }) => ({
     ...state,
     error: null,
     cards: state.cards.concat(cards),
+    isLastPage: cards.length === 0,
   }),
   [GET_CARDS_FAILURE]: (state, { payload: error }) => ({
     ...state,
@@ -166,6 +176,14 @@ const cards = createReducer<CardsState, CardsAction>(initialState, {
       ...state.filter,
       onlyScrap: !state.filter.onlyScrap,
     },
+  }),
+  [ADD_PAGE]: (state) => ({
+    ...state,
+    page: state.page + 1,
+  }),
+  [SET_IS_LAST_PAGE]: (state, { payload: isLastPage }) => ({
+    ...state,
+    isLastPage,
   }),
 });
 

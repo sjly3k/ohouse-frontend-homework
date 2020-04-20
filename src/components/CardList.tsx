@@ -36,14 +36,36 @@ function CardList() {
     cards,
     scrapCards,
     filter: { onlyScrap },
-    getGetCards,
+    page,
+    isLastPage,
+    onGetCards,
+    onAddPage,
   } = useCardList();
-
   const showingCards = onlyScrap ? scrapCards : cards;
 
   useEffect(() => {
-    getGetCards();
-  }, []);
+    function handleScroll() {
+      if (loading || isLastPage || onlyScrap) {
+        return;
+      }
+
+      if (
+        window.innerHeight + document.documentElement.scrollTop !==
+        document.documentElement.offsetHeight
+      ) {
+        return;
+      }
+
+      onAddPage();
+    }
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [loading, onAddPage, isLastPage, onlyScrap]);
+
+  useEffect(() => {
+    onGetCards(page);
+  }, [page, onGetCards]);
 
   return (
     <CardListBlock>

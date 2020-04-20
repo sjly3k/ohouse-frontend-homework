@@ -1,11 +1,11 @@
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../modules";
-import { GET_CARDS, getCardsAsync } from "../modules/cards";
+import { GET_CARDS, getCardsAsync, addPage } from "../modules/cards";
 import { useCallback } from "react";
 
 export default function useCardList() {
   const {
-    cards: { cards, scrapCards, error, filter, page },
+    cards: { cards, scrapCards, error, filter, page, isLastPage },
     loading,
   } = useSelector((state: RootState) => ({
     ...state,
@@ -13,10 +13,11 @@ export default function useCardList() {
   }));
 
   const dispatch = useDispatch();
-  const getGetCards = useCallback(
-    () => dispatch(getCardsAsync.request(page + 1)),
-    [dispatch, page]
+  const onGetCards = useCallback(
+    (page: number) => dispatch(getCardsAsync.request(page)),
+    [dispatch]
   );
+  const onAddPage = useCallback(() => dispatch(addPage()), [dispatch]);
 
   return {
     cards,
@@ -24,7 +25,9 @@ export default function useCardList() {
     error,
     filter,
     page,
+    isLastPage,
     loading,
-    getGetCards,
+    onGetCards,
+    onAddPage,
   };
 }
