@@ -1,44 +1,62 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 버킷플레이스(오늘의집) 과제: 사진 피드 만들기
 
-## Available Scripts
+이 프로젝트는 버킷플레이스(오늘의집) 과제입니다.
 
-In the project directory, you can run:
+![](/images/card_list.jpg)
 
-### `yarn start`
+## 기술 스택
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+이 프로젝트에 사용된 기술은 다음과 같습니다.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+- Language: [TypeScript](https://github.com/microsoft/TypeScript)
+- Library: [react](https://github.com/facebook/react/), [redux](https://github.com/reduxjs/redux), [redux-saga](https://github.com/redux-saga/redux-saga), [axios](https://github.com/axios/axios), [typesafe-actions](https://github.com/piotrwitek/typesafe-actions)
+- Styling: [styled-components](https://github.com/styled-components/styled-components)
+- Project Setup: [Create React App](https://github.com/facebook/create-react-app)
 
-### `yarn test`
+## 프로젝트 시연
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Production: [https://ohouse-frontend-homework.now.sh/](https://ohouse-frontend-homework.now.sh/)
+- Development: 프로젝트 디렉터리에서 `yarn start` 명령어 실행 후 브라우저에서 [http://localhost:3000](http://localhost:3000) 접속
 
-### `yarn build`
+## 요구사항
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 디자인
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+[디자인 가이드](https://zpl.io/bzN4xWM)에 부합하는 웹 PC 화면 구현
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- ID: developer@bucketplace.net
+- PW: helloBucket!
 
-### `yarn eject`
+### 백로그
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- 사진 리스트
+  - 다음 URL을 통해 받아온 사진 리스트 정보를 보여주도록 구현
+  ```
+  https://s3.ap-northeast-2.amazonaws.com/bucketplace-coding-test/cards/page_1.json
+  https://s3.ap-northeast-2.amazonaws.com/bucketplace-coding-test/cards/page_2.json
+  ... 계속
+  ```
+  - JSON 스키마
+  ```
+  [
+    {
+      id: number,
+      image_url: string,
+      nickname: string,
+      profile_image_url: string
+    },
+    ...
+  ]
+  ```
+  - 무한 스크롤(스크롤에 따라 다음 페이지 정보 요청)으로 구현
+  - 빈 값이 나올떄까지 지속적으로 Ajax 요청하도록 구현
+- 스크랩 기능
+  - 스크랩 버튼 클릭 시 `localStorage`를 이용하여 스크랩한 사진 정보 저장/삭제하도록 구현
+  - 스크랩이 된 경우 스크랩 버튼이 파란색으로, 스크랩이 되지 않은 경우에는 스크랩 버튼이 하얀색으로 변하도록 구현
+  - 새로고침 시 스크랩된 사진의 경우 스크랩된 상태로 표시되어 있도록 구현
+- 필터 기능
+  - 스크랩한 것만 모아보기 필터 사용 시 스크랩된 사진만 불러오도록 구현
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 선택사항
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- 스크랩/스크랩 취소 시 사용자와의 인터랙션
