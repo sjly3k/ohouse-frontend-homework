@@ -9,6 +9,7 @@ import { getCards } from "../lib/api";
 import { takeEvery, call, put, select } from "redux-saga/effects";
 import { startLoading, finishLoading } from "./loading";
 import * as localStorageUtil from "../lib/localStorageUtil";
+import { ADD_TOAST } from "./toasts";
 
 export const GET_CARDS = "cards/GET_CARDS";
 export const GET_CARDS_SUCCESS = "cards/GET_CARDS_SUCCESS";
@@ -79,17 +80,26 @@ function* toggleScrapCardSaga({
 }: ReturnType<typeof toggleScrapCard>) {
   const nextCard = { ...card, isBookmarked: !card.isBookmarked };
 
+  let toastMessage = "";
+
   if (nextCard.isBookmarked) {
+    toastMessage = "스크랩했습니다.";
     yield put({
       type: ADD_SCRAP_CARD,
       payload: nextCard,
     });
   } else {
+    toastMessage = "스크랩북에서 삭제했습니다.";
     yield put({
       type: REMOVE_SCRAP_CARD,
       payload: nextCard.id,
     });
   }
+
+  yield put({
+    type: ADD_TOAST,
+    payload: toastMessage,
+  });
 }
 
 function* addScrapCardSaga({ payload: card }: ReturnType<typeof addScrapCard>) {
